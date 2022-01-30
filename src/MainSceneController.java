@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -86,13 +87,40 @@ public class MainSceneController implements Initializable {
         }
 
         if (this.itemAvaiable) {
+
             if (!quantityField.getText().isEmpty())
             {
                 this.quantity = Integer.parseInt(quantityField.getText());
+                if (this.quantity >= 15) {
+                    discount = 20;
+                }
+                else if (this.quantity >= 10 && this.quantity <= 14) {
+                    discount = 15;
+                }
+                else if (this.quantity >= 5 && this.quantity <= 9) {
+                    discount = 10;
+                } 
+                else if (this.quantity >= 1 && this.quantity <= 4)
+                {
+                    discount = 0;
+                }
+                System.out.println("the discount" + discount / 100.0);
+                if (discount != 0) {
+                    double percentOff = this.itemPrice * (double) this.quantity * (this.discount / 100.0);
+                    this.total = (this.itemPrice * this.quantity) - percentOff;
+                }
+                else {
+                    this.total = this.itemPrice * this.quantity;
+                }
+
+
+                
+
                 detailField.setText(this.itemID + " " + this.itemName + " " + 
-                this.itemPrice + " " + quantity + " " + discount + "%");
+                this.itemPrice + " " + quantity + " " + discount + "%" + " " + this.total);
             }
             else {
+                // have a pop up here
                 System.out.println("ENTER QUANTITY!");
             }
 
