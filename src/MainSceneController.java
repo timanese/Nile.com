@@ -29,8 +29,8 @@ public class MainSceneController implements Initializable {
     // this is like a constructor but itll happen after all the fxml stuff is loaded
     // When the java gui is loaded all this inside the method will execute. 
 
-    private ArrayList<Item> storeInventory = new ArrayList<Item>(); 
-    private ArrayList<String> invoice = new ArrayList<String>();
+    // private ArrayList<Item> storeInventory = new ArrayList<Item>(); 
+    // private ArrayList<String> invoice = new ArrayList<String>();
 
     @FXML
     private TextField itemIDField;
@@ -100,7 +100,7 @@ public class MainSceneController implements Initializable {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(", ");
 
-                storeInventory.add(new Item(values[0], values[1], Boolean.parseBoolean(values[2]), Double.parseDouble(values[3])));
+                Orderdata.storeInventory.add(new Item(values[0], values[1], Boolean.parseBoolean(values[2]), Double.parseDouble(values[3])));
 
             }
             // for (Item str : storeInventory) {
@@ -124,28 +124,28 @@ public class MainSceneController implements Initializable {
     // Returning a value so we can stop the process after a popup
     @FXML
     int processClick(ActionEvent event) {
-        this.itemName = "";
+        Orderdata.itemName = "";
 
         String enteredID = itemIDField.getText();
 
         if (!enteredID.isEmpty()) {
 
-            for (Item items : storeInventory) {
+            for (Item items : Orderdata.storeInventory) {
 
                 if (enteredID.equals(items.getId()) == true) {
                     System.out.println(items.getName());
 
-                    this.itemName = items.getName();
-                    this.itemID = items.getId();
-                    this.itemAvaiable = items.getAvailability();
-                    this.itemPrice = items.getPrice();
+                    Orderdata.itemName = items.getName();
+                    Orderdata.itemID = items.getId();
+                    Orderdata.itemAvaiable = items.getAvailability();
+                    Orderdata.itemPrice = items.getPrice();
                     
                     break;
                 }
 
             }
 
-            if (this.itemName.isEmpty())
+            if (Orderdata.itemName.isEmpty())
             {
                 popup.setTitle("NILE DOT COME ERROR - INVALID ID");
                 popup.setContentText("item " + enteredID + " not in file.");
@@ -168,37 +168,37 @@ public class MainSceneController implements Initializable {
             
         }
 
-        if (this.itemAvaiable && !enteredID.isEmpty()) {
+        if (Orderdata.itemAvaiable && !enteredID.isEmpty()) {
 
             if (!quantityField.getText().isEmpty())
             {
-                this.quantity = Integer.parseInt(quantityField.getText());
-                if (this.quantity >= 15) {
-                    discount = 20;
+                Orderdata.quantity = Integer.parseInt(quantityField.getText());
+                if (Orderdata.quantity >= 15) {
+                    Orderdata.discount = 20;
                 }
-                else if (this.quantity >= 10 && this.quantity <= 14) {
-                    discount = 15;
+                else if (Orderdata.quantity >= 10 && Orderdata.quantity <= 14) {
+                    Orderdata.discount = 15;
                 }
-                else if (this.quantity >= 5 && this.quantity <= 9) {
-                    discount = 10;
+                else if (Orderdata.quantity >= 5 && Orderdata.quantity <= 9) {
+                    Orderdata.discount = 10;
                 } 
-                else if (this.quantity >= 1 && this.quantity <= 4)
+                else if (Orderdata.quantity >= 1 && Orderdata.quantity <= 4)
                 {
-                    discount = 0;
+                    Orderdata.discount = 0;
                 }
-                System.out.println("the discount" + discount / 100.0);
-                if (discount != 0) {
-                    double percentOff = this.itemPrice * (double) this.quantity * (this.discount / 100.0);
-                    this.itemTotal = (this.itemPrice * this.quantity) - percentOff;
+                System.out.println("the discount" + Orderdata.discount / 100.0);
+                if (Orderdata.discount != 0) {
+                    double percentOff = Orderdata.itemPrice * (double) Orderdata.quantity * (Orderdata.discount / 100.0);
+                    Orderdata.itemTotal = (Orderdata.itemPrice * Orderdata.quantity) - percentOff;
                 }
                 else {
-                    this.itemTotal = this.itemPrice * this.quantity;
+                    Orderdata.itemTotal = Orderdata.itemPrice * Orderdata.quantity;
                 }
 
-                this.subtotal += this.itemTotal;
+                Orderdata.subtotal += Orderdata.itemTotal;
 
-                detailField.setText(this.itemID + " " + this.itemName + " " + 
-                this.itemPrice + " " + quantity + " " + discount + "%" + " " + df.format(this.itemTotal));
+                detailField.setText(Orderdata.itemID + " " + Orderdata.itemName + " " + 
+                Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " " + df.format(Orderdata.itemTotal));
 
 
 
@@ -237,30 +237,30 @@ public class MainSceneController implements Initializable {
     @FXML
     void confirmClick(ActionEvent event) {
 
-        subtotalField.setText(df.format(this.subtotal) +"");
+        subtotalField.setText(df.format(Orderdata.subtotal) +"");
 
         // add to invoice 
-        invoice.add(this.itemID + " " + this.itemName + " " + 
-        this.itemPrice + " " + quantity + " " + discount + "%" + " " + this.itemTotal);
-        System.out.println(invoice.get(0));
+        Orderdata.invoice.add(Orderdata.itemID + " " + Orderdata.itemName + " " + 
+        Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " " + Orderdata.itemTotal);
+        System.out.println(Orderdata.invoice.get(0));
         
 
         //pop up to notify user the item has been added
-        System.out.println(this.totalNumItems);
+        System.out.println(Orderdata.totalNumItems);
         popup.setTitle("NILE DOT COM - Item Confirmed");
-        popup.setContentText("item #" + this.totalNumItems + " accepted. Added to your cart.");
+        popup.setContentText("item #" + Orderdata.totalNumItems + " accepted. Added to your cart.");
         popup.getDialogPane().getButtonTypes().add(type);
         popup.showAndWait();
 
         // update current item # shown on screen 
-        totalNumItems++;
+        Orderdata.totalNumItems++;
 
-        itemIDLabel.setText("Enter item ID for item #" + this.totalNumItems);
-        quantityLabel.setText("Enter quantity for item #" + this.totalNumItems);
-        detailLabel.setText("Details for item #" + this.totalNumItems);
-        confirmButton.setText("Confirm item #"+ this.totalNumItems);
-        processButton.setText("Process item #" + this.totalNumItems);
-        subtotalLabel.setText("Order subtotal for " + (this.totalNumItems - 1) + " item(s)");
+        itemIDLabel.setText("Enter item ID for item #" + Orderdata.totalNumItems);
+        quantityLabel.setText("Enter quantity for item #" + Orderdata.totalNumItems);
+        detailLabel.setText("Details for item #" + Orderdata.totalNumItems);
+        confirmButton.setText("Confirm item #"+ Orderdata.totalNumItems);
+        processButton.setText("Process item #" + Orderdata.totalNumItems);
+        subtotalLabel.setText("Order subtotal for " + (Orderdata.totalNumItems - 1) + " item(s)");
 
         this.confirmButton.setDisable(true);
         this.processButton.setDisable(false);
@@ -283,8 +283,8 @@ public class MainSceneController implements Initializable {
         System.out.println("TO\n");
 
         // clear out the invoice / transaction arraylist 
-        if (!invoice.isEmpty()) {
-            invoice.clear();
+        if (!Orderdata.invoice.isEmpty()) {
+            Orderdata.invoice.clear();
         }
 
         // reset the gui back to default state 
@@ -300,9 +300,9 @@ public class MainSceneController implements Initializable {
         detailField.clear();
         subtotalField.clear();
 
-        this.totalNumItems = 1;
-        this.itemTotal = 0;
-        this.subtotal = 0;
+        Orderdata.totalNumItems = 1;
+        Orderdata.itemTotal = 0;
+        Orderdata.subtotal = 0;
 
         this.viewOrderButton.setDisable(true);
         this.finishButton.setDisable(true);
@@ -312,7 +312,7 @@ public class MainSceneController implements Initializable {
     @FXML
     void exitClick(ActionEvent event) {
         System.out.println("PLUTO\n");
-        if (invoice.isEmpty())
+        if (Orderdata.invoice.isEmpty())
         {
             System.out.println("SON OF A BITCH");
         }
