@@ -3,23 +3,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
 
-import javax.annotation.processing.ProcessingEnvironment;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.stage.Popup;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 public class MainSceneController implements Initializable {
 
@@ -28,6 +31,7 @@ public class MainSceneController implements Initializable {
 
     private ArrayList<Item> storeInventory = new ArrayList<Item>(); 
     private ArrayList<String> invoice = new ArrayList<String>();
+
     @FXML
     private TextField itemIDField;
     @FXML
@@ -45,6 +49,10 @@ public class MainSceneController implements Initializable {
     private Button finishButton;
     @FXML
     private Button processButton;
+    @FXML
+    private Button newOrderButton;
+    // @FXML
+    // private Button viewOrderOkBtn;
 
     @FXML 
     private Label itemIDLabel;
@@ -55,26 +63,32 @@ public class MainSceneController implements Initializable {
     @FXML 
     private Label subtotalLabel;
 
+    // Wiring scene for viewOrder
+    private Parent root;
+    private Stage viewOrderStage;
+    private Scene viewOrderScene;
 
-    private int quantity = 0;
-    private int discount = 0; 
-    private double itemTotal = 0;
-    private double subtotal = 0;
+    @FXML
+    private AnchorPane rootPane;
 
-    private String itemName;
-    private String itemID;
-    private boolean itemAvaiable;
-    private double itemPrice;
 
-    private int totalNumItems = 1;
+
+    // private int quantity = 0;
+    // private int discount = 0; 
+    // private double itemTotal = 0;
+    // private double subtotal = 0;
+
+    // private String itemName;
+    // private String itemID;
+    // private boolean itemAvaiable;
+    // private double itemPrice;
+
+    // private int totalNumItems = 1;
 
     Dialog<String> popup = new Dialog<String>();
     ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
 
-    
-
-
-   
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
 
     @Override
@@ -98,17 +112,21 @@ public class MainSceneController implements Initializable {
             e.printStackTrace();
         }
 
-        confirmButton.setDisable(true);
-        viewOrderButton.setDisable(true);
-        finishButton.setDisable(true);
+        this.confirmButton.setDisable(true);
+        this.viewOrderButton.setDisable(true);
+        this.finishButton.setDisable(true);
+        System.out.println("DOES IT COME IN HERE");
     }
 
+
+    // Returns a 0 if error popup appears 
+    // Return 1 if processing is successful 
+    // Returning a value so we can stop the process after a popup
     @FXML
-    void processClick(ActionEvent event) {
+    int processClick(ActionEvent event) {
         this.itemName = "";
 
         String enteredID = itemIDField.getText();
-        Item currentItem = new Item("empty", "empty", false, 0);
 
         if (!enteredID.isEmpty()) {
 
@@ -133,6 +151,11 @@ public class MainSceneController implements Initializable {
                 popup.setContentText("item " + enteredID + " not in file.");
                 popup.getDialogPane().getButtonTypes().add(type);
                 popup.showAndWait();
+
+                itemIDField.clear();
+                quantityField.clear();
+
+                return 0;
             }
         }
         else {
@@ -141,6 +164,7 @@ public class MainSceneController implements Initializable {
             popup.setContentText("Enter an item you would like please.");
             popup.getDialogPane().getButtonTypes().add(type);
             popup.showAndWait();
+            return 0;
             
         }
 
@@ -172,18 +196,16 @@ public class MainSceneController implements Initializable {
                 }
 
                 this.subtotal += this.itemTotal;
-                
 
                 detailField.setText(this.itemID + " " + this.itemName + " " + 
-                this.itemPrice + " " + quantity + " " + discount + "%" + " " + this.itemTotal);
+                this.itemPrice + " " + quantity + " " + discount + "%" + " " + df.format(this.itemTotal));
 
-                invoice.add(this.itemID + " " + this.itemName + " " + 
-                this.itemPrice + " " + quantity + " " + discount + "%" + " " + this.itemTotal);
-                System.out.println(invoice.get(0));
-                // update current item # shown on screen 
-                totalNumItems++;
+
+
                 processButton.setDisable(true);
                 confirmButton.setDisable(false);
+                viewOrderButton.setDisable(true);
+                finishButton.setDisable(true);
             }
             else {
                 // have a pop up here
@@ -192,11 +214,8 @@ public class MainSceneController implements Initializable {
                 popup.setContentText("Enter a quantity.");
                 popup.getDialogPane().getButtonTypes().add(type);
                 popup.showAndWait();
+                return 0;
             }
-
-            // if (detailField.getText().isEmpty()) {
-            //     System.out.println("Nile dot com currently does not carry that item!");
-            // }
 
 
         }
@@ -205,7 +224,12 @@ public class MainSceneController implements Initializable {
             popup.setContentText("Sorry... that item is out of stock, please try another item.");
             popup.getDialogPane().getButtonTypes().add(type);
             popup.showAndWait();
+
+            // clear out entered information 
+            itemIDField.clear();
+            quantityField.clear();
         }
+        return 1;
         
 
     }
@@ -213,28 +237,39 @@ public class MainSceneController implements Initializable {
     @FXML
     void confirmClick(ActionEvent event) {
 
-        subtotalField.setText(this.subtotal +"");
+        subtotalField.setText(df.format(this.subtotal) +"");
 
         // add to invoice 
-
+        invoice.add(this.itemID + " " + this.itemName + " " + 
+        this.itemPrice + " " + quantity + " " + discount + "%" + " " + this.itemTotal);
+        System.out.println(invoice.get(0));
         
 
-        // have a pop up here to say item is accepted 
+        //pop up to notify user the item has been added
         System.out.println(this.totalNumItems);
+        popup.setTitle("NILE DOT COM - Item Confirmed");
+        popup.setContentText("item #" + this.totalNumItems + " accepted. Added to your cart.");
+        popup.getDialogPane().getButtonTypes().add(type);
+        popup.showAndWait();
+
+        // update current item # shown on screen 
+        totalNumItems++;
+
         itemIDLabel.setText("Enter item ID for item #" + this.totalNumItems);
         quantityLabel.setText("Enter quantity for item #" + this.totalNumItems);
         detailLabel.setText("Details for item #" + this.totalNumItems);
         confirmButton.setText("Confirm item #"+ this.totalNumItems);
-        processButton.setText("Process item#" + this.totalNumItems);
+        processButton.setText("Process item #" + this.totalNumItems);
+        subtotalLabel.setText("Order subtotal for " + (this.totalNumItems - 1) + " item(s)");
 
-
-        confirmButton.setDisable(true);
-        processButton.setDisable(false);
-        viewOrderButton.setDisable(false);
-        finishButton.setDisable(false);
+        this.confirmButton.setDisable(true);
+        this.processButton.setDisable(false);
+        this.viewOrderButton.setDisable(false);
+        this.finishButton.setDisable(false);
 
         itemIDField.clear();
         quantityField.clear();
+
         
     }
 
@@ -246,15 +281,56 @@ public class MainSceneController implements Initializable {
     @FXML
     void newOrderClick(ActionEvent event) {
         System.out.println("TO\n");
+
+        // clear out the invoice / transaction arraylist 
+        if (!invoice.isEmpty()) {
+            invoice.clear();
+        }
+
+        // reset the gui back to default state 
+
+        processButton.setText("Process item #1");
+        confirmButton.setText("Confirm item #1");
+        itemIDLabel.setText("Enter item ID for item #1");
+        quantityLabel.setText("Enter quantity for item #1");
+        detailLabel.setText("Details for item #1");
+        subtotalLabel.setText("Order subtotal for 0 item(s)");
+        itemIDField.clear();
+        quantityField.clear();
+        detailField.clear();
+        subtotalField.clear();
+
+        this.totalNumItems = 1;
+        this.itemTotal = 0;
+        this.subtotal = 0;
+
+        this.viewOrderButton.setDisable(true);
+        this.finishButton.setDisable(true);
+
     }
 
     @FXML
     void exitClick(ActionEvent event) {
         System.out.println("PLUTO\n");
+        if (invoice.isEmpty())
+        {
+            System.out.println("SON OF A BITCH");
+        }
+
+        else {
+            System.out.println("Okay some healthy information.");
+        }
     }
 
     @FXML
-    void viewClick(ActionEvent event) {
+    void viewClick(ActionEvent event) throws IOException {
+        System.out.println("BREUH");
+        AnchorPane pane = FXMLLoader.load(getClass().getResource("viewOrderScene.fxml"));
+        rootPane.getChildren().setAll(pane);
+    //      viewOrderStage = (Stage)((Node)event.getSource()).getScene().getWindow();
+    //    viewOrderScene = new Scene(root);
+    //     viewOrderStage.setScene(viewOrderScene);
+    //     viewOrderStage.show();
 
     }
 

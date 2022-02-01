@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="viewOrderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="455.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="viewOrderController">
+   <children>
+      <Label layoutX="86.0" layoutY="6.0" text="NILE DOT COM -Current Shopping Cart Status">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <TextArea layoutX="27.0" layoutY="37.0" prefHeight="390.0" prefWidth="587.0" />
+      <Button layoutX="283.0" layoutY="429.0" mnemonicParsing="false" onAction="#backToMain" prefHeight="25.0" prefWidth="76.0" text="Ok" />
+   </children>
+</AnchorPane>

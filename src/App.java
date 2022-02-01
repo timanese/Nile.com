@@ -1,20 +1,11 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import java.io.*;
-import java.util.ArrayList;
- 
 
 public class App extends Application {
 
@@ -65,19 +56,6 @@ public class App extends Application {
             e.printStackTrace();
         }
 
-    /*     stage.setX(50);
-        stage.setY(50); */
-        // stage.FullScreen(true);
-        // stage.setFullScreenExitHint("Except with q");
-
-        // Text text = new Text();
-        // text.setText("Enter item ID for item ");
-        // text.setX(100);
-        // text.setY(100);
-
-
-
-        // root.getChildren().add(text);
 
     }
 

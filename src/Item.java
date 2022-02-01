@@ -27,10 +27,4 @@ public class Item {
     public double getPrice() {
         return this.price;
     }
-
-    // public Item(int parseInt, String name2, String string, double parseDouble) {
-    // }
-
-
-
 }

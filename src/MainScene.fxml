@@ -6,26 +6,26 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="622.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="568.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainSceneController">
    <children>
-      <Label layoutX="272.0" layoutY="14.0" prefHeight="19.0" prefWidth="115.0" text="NILE.COM (P)" textAlignment="RIGHT" textOverrun="CLIP">
+      <Label layoutX="309.0" layoutY="14.0" prefHeight="19.0" prefWidth="115.0" text="NILE.COM (P)" textAlignment="RIGHT" textOverrun="CLIP">
          <font>
             <Font name="Verdana" size="15.0" />
          </font>
       </Label>
-      <Button fx:id="processButton" layoutX="23.0" layoutY="55.0" mnemonicParsing="false" onAction="#processClick" prefHeight="51.0" prefWidth="130.0" text="Process item #1" />
-      <Button fx:id="confirmButton" layoutX="23.0" layoutY="116.0" mnemonicParsing="false" onAction="#confirmClick" prefHeight="51.0" prefWidth="130.0" text="Confirm item #1" />
-      <Button fx:id="finishButton" layoutX="23.0" layoutY="241.0" mnemonicParsing="false" onAction="#finishClick" prefHeight="51.0" prefWidth="130.0" text="Finish Order" />
-      <Button fx:id="newOrderButton" layoutX="23.0" layoutY="305.0" mnemonicParsing="false" onAction="#newOrderClick" prefHeight="51.0" prefWidth="130.0" text="New order" />
-      <Button fx:id="exitButton" layoutX="514.0" layoutY="339.0" mnemonicParsing="false" onAction="#exitClick" prefHeight="40.0" prefWidth="76.0" text="Exit" />
-      <Label fx:id="itemIDLabel" layoutX="304.0" layoutY="47.0" prefHeight="17.0" prefWidth="139.0" text="Enter item ID for item #1" />
-      <Label fx:id="quantityLabel" layoutX="298.0" layoutY="124.0" prefHeight="17.0" prefWidth="150.0" text="Enter Quantity for Item #1" />
-      <Label fx:id="subtotalLabel" layoutX="304.0" layoutY="266.0" text="Order subtotlal for 0 item(s)" />
-      <Label fx:id="detailLabel" layoutX="329.0" layoutY="195.0" text="Details for item #1" />
-      <TextField fx:id="itemIDField" layoutX="173.0" layoutY="68.0" prefHeight="25.0" prefWidth="417.0" />
-      <TextField fx:id="quantityField" layoutX="173.0" layoutY="153.0" prefHeight="25.0" prefWidth="417.0" />
-      <TextField fx:id="detailField" layoutX="173.0" layoutY="219.0" prefHeight="25.0" prefWidth="417.0" />
-      <TextField fx:id="subtotalField" layoutX="173.0" layoutY="292.0" prefHeight="25.0" prefWidth="417.0" />
-      <Button fx:id="viewOrderButton" layoutX="23.0" layoutY="178.0" mnemonicParsing="false" onAction="#viewClick" prefHeight="51.0" prefWidth="130.0" text="Process item #1" />
+      <Button fx:id="processButton" layoutX="50.0" layoutY="107.0" mnemonicParsing="false" onAction="#processClick" prefHeight="51.0" prefWidth="130.0" text="Process item #1" />
+      <Button fx:id="confirmButton" layoutX="50.0" layoutY="168.0" mnemonicParsing="false" onAction="#confirmClick" prefHeight="51.0" prefWidth="130.0" text="Confirm item #1" />
+      <Button fx:id="finishButton" layoutX="50.0" layoutY="293.0" mnemonicParsing="false" onAction="#finishClick" prefHeight="51.0" prefWidth="130.0" text="Finish Order" />
+      <Button fx:id="newOrderButton" layoutX="50.0" layoutY="357.0" mnemonicParsing="false" onAction="#newOrderClick" prefHeight="51.0" prefWidth="130.0" text="New order" />
+      <Button fx:id="exitButton" layoutX="541.0" layoutY="391.0" mnemonicParsing="false" onAction="#exitClick" prefHeight="40.0" prefWidth="76.0" text="Exit" />
+      <Label fx:id="itemIDLabel" layoutX="331.0" layoutY="99.0" prefHeight="17.0" prefWidth="139.0" text="Enter item ID for item #1" />
+      <Label fx:id="quantityLabel" layoutX="325.0" layoutY="176.0" prefHeight="17.0" prefWidth="150.0" text="Enter quantity for item #1" />
+      <Label fx:id="subtotalLabel" layoutX="331.0" layoutY="318.0" text="Order subtotal for 0 item(s)" />
+      <Label fx:id="detailLabel" layoutX="356.0" layoutY="247.0" text="Details for item #1" />
+      <TextField fx:id="itemIDField" layoutX="200.0" layoutY="120.0" prefHeight="25.0" prefWidth="417.0" />
+      <TextField fx:id="quantityField" layoutX="200.0" layoutY="205.0" prefHeight="25.0" prefWidth="417.0" />
+      <TextField fx:id="detailField" layoutX="200.0" layoutY="271.0" prefHeight="25.0" prefWidth="417.0" />
+      <TextField fx:id="subtotalField" layoutX="200.0" layoutY="344.0" prefHeight="25.0" prefWidth="417.0" />
+      <Button fx:id="viewOrderButton" layoutX="50.0" layoutY="230.0" mnemonicParsing="false" onAction="#viewClick" prefHeight="51.0" prefWidth="130.0" text="View Order" />
    </children>
 </AnchorPane>
