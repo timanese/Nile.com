@@ -7,7 +7,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,9 +26,9 @@ import javafx.stage.Stage;
 public class MainSceneController implements Initializable {
 
     // this is like a constructor but itll happen after all the fxml stuff is loaded
-    // When the java gui is loaded all this inside the method will execute. 
+    // When the java gui is loaded all this inside the method will execute.
 
-    // private ArrayList<Item> storeInventory = new ArrayList<Item>(); 
+    // private ArrayList<Item> storeInventory = new ArrayList<Item>();
     // private ArrayList<String> invoice = new ArrayList<String>();
 
     @FXML
@@ -41,11 +40,11 @@ public class MainSceneController implements Initializable {
     @FXML
     private TextField subtotalField;
 
-    @FXML 
+    @FXML
     private Button confirmButton;
-    @FXML 
+    @FXML
     private Button viewOrderButton;
-    @FXML 
+    @FXML
     private Button finishButton;
     @FXML
     private Button processButton;
@@ -54,13 +53,13 @@ public class MainSceneController implements Initializable {
     // @FXML
     // private Button viewOrderOkBtn;
 
-    @FXML 
+    @FXML
     private Label itemIDLabel;
-    @FXML 
+    @FXML
     private Label quantityLabel;
-    @FXML 
+    @FXML
     private Label detailLabel;
-    @FXML 
+    @FXML
     private Label subtotalLabel;
 
     // Wiring scene for viewOrder
@@ -71,10 +70,8 @@ public class MainSceneController implements Initializable {
     @FXML
     private AnchorPane rootPane;
 
-
-
     // private int quantity = 0;
-    // private int discount = 0; 
+    // private int discount = 0;
     // private double itemTotal = 0;
     // private double subtotal = 0;
 
@@ -90,21 +87,21 @@ public class MainSceneController implements Initializable {
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        File file = new File("lib/inventory.txt"); 
+        File file = new File("lib/inventory.txt");
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = null;
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(", ");
 
-                Orderdata.storeInventory.add(new Item(values[0], values[1], Boolean.parseBoolean(values[2]), Double.parseDouble(values[3])));
+                Orderdata.storeInventory.add(
+                        new Item(values[0], values[1], Boolean.parseBoolean(values[2]), Double.parseDouble(values[3])));
 
             }
             // for (Item str : storeInventory) {
-            //     System.out.println(str.getId());
+            // System.out.println(str.getId());
             // }
             br.close();
         } catch (NumberFormatException | IOException e) {
@@ -115,12 +112,16 @@ public class MainSceneController implements Initializable {
         this.confirmButton.setDisable(true);
         this.viewOrderButton.setDisable(true);
         this.finishButton.setDisable(true);
+
+        itemIDLabel.setText("Enter item ID for item #" + OrderData.totalNumItems);
+        quantityLabel.setText("Enter quantity for item #1" + OrderData.totalNumItems);
+        detailLabel.setText("Details for item #1" + OrderData.totalNumItems);
+        subtotalLabel.setText("Order subtotal for " + (OrderData.totalNumItems - 1) + " item(s)");
         System.out.println("DOES IT COME IN HERE");
     }
 
-
-    // Returns a 0 if error popup appears 
-    // Return 1 if processing is successful 
+    // Returns a 0 if error popup appears
+    // Return 1 if processing is successful
     // Returning a value so we can stop the process after a popup
     @FXML
     int processClick(ActionEvent event) {
@@ -139,14 +140,13 @@ public class MainSceneController implements Initializable {
                     Orderdata.itemID = items.getId();
                     Orderdata.itemAvaiable = items.getAvailability();
                     Orderdata.itemPrice = items.getPrice();
-                    
+
                     break;
                 }
 
             }
 
-            if (Orderdata.itemName.isEmpty())
-            {
+            if (Orderdata.itemName.isEmpty()) {
                 popup.setTitle("NILE DOT COME ERROR - INVALID ID");
                 popup.setContentText("item " + enteredID + " not in file.");
                 popup.getDialogPane().getButtonTypes().add(type);
@@ -157,57 +157,49 @@ public class MainSceneController implements Initializable {
 
                 return 0;
             }
-        }
-        else {
+        } else {
             System.out.println("Please enter a item identification.");
             popup.setTitle("NILE DOT COME ERROR - NO ENTRY");
             popup.setContentText("Enter an item you would like please.");
             popup.getDialogPane().getButtonTypes().add(type);
             popup.showAndWait();
             return 0;
-            
+
         }
 
         if (Orderdata.itemAvaiable && !enteredID.isEmpty()) {
 
-            if (!quantityField.getText().isEmpty())
-            {
+            if (!quantityField.getText().isEmpty()) {
                 Orderdata.quantity = Integer.parseInt(quantityField.getText());
                 if (Orderdata.quantity >= 15) {
                     Orderdata.discount = 20;
-                }
-                else if (Orderdata.quantity >= 10 && Orderdata.quantity <= 14) {
+                } else if (Orderdata.quantity >= 10 && Orderdata.quantity <= 14) {
                     Orderdata.discount = 15;
-                }
-                else if (Orderdata.quantity >= 5 && Orderdata.quantity <= 9) {
+                } else if (Orderdata.quantity >= 5 && Orderdata.quantity <= 9) {
                     Orderdata.discount = 10;
-                } 
-                else if (Orderdata.quantity >= 1 && Orderdata.quantity <= 4)
-                {
+                } else if (Orderdata.quantity >= 1 && Orderdata.quantity <= 4) {
                     Orderdata.discount = 0;
                 }
                 System.out.println("the discount" + Orderdata.discount / 100.0);
                 if (Orderdata.discount != 0) {
-                    double percentOff = Orderdata.itemPrice * (double) Orderdata.quantity * (Orderdata.discount / 100.0);
+                    double percentOff = Orderdata.itemPrice * (double) Orderdata.quantity
+                            * (Orderdata.discount / 100.0);
                     Orderdata.itemTotal = (Orderdata.itemPrice * Orderdata.quantity) - percentOff;
-                }
-                else {
+                } else {
                     Orderdata.itemTotal = Orderdata.itemPrice * Orderdata.quantity;
                 }
 
                 Orderdata.subtotal += Orderdata.itemTotal;
 
-                detailField.setText(Orderdata.itemID + " " + Orderdata.itemName + " " + 
-                Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " " + df.format(Orderdata.itemTotal));
-
-
+                detailField.setText(Orderdata.itemID + " " + Orderdata.itemName + " " +
+                        Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " "
+                        + df.format(Orderdata.itemTotal));
 
                 processButton.setDisable(true);
                 confirmButton.setDisable(false);
                 viewOrderButton.setDisable(true);
                 finishButton.setDisable(true);
-            }
-            else {
+            } else {
                 // have a pop up here
                 System.out.println("ENTER QUANTITY!");
                 popup.setTitle("NILE DOT COME ERROR");
@@ -217,48 +209,45 @@ public class MainSceneController implements Initializable {
                 return 0;
             }
 
-
-        }
-        else {
+        } else {
             popup.setTitle("NILE DOT COME ERROR - OUT OF STOCK");
             popup.setContentText("Sorry... that item is out of stock, please try another item.");
             popup.getDialogPane().getButtonTypes().add(type);
             popup.showAndWait();
 
-            // clear out entered information 
+            // clear out entered information
             itemIDField.clear();
             quantityField.clear();
         }
         return 1;
-        
 
     }
 
     @FXML
     void confirmClick(ActionEvent event) {
 
-        subtotalField.setText(df.format(Orderdata.subtotal) +"");
+        subtotalField.setText(df.format(Orderdata.subtotal) + "");
 
-        // add to invoice 
-        Orderdata.invoice.add(Orderdata.itemID + " " + Orderdata.itemName + " " + 
-        Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " " + Orderdata.itemTotal);
+        // add to invoice
+        Orderdata.invoice.add(Orderdata.itemID + " " + Orderdata.itemName + " " +
+                Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " "
+                + Orderdata.itemTotal);
         System.out.println(Orderdata.invoice.get(0));
-        
 
-        //pop up to notify user the item has been added
+        // pop up to notify user the item has been added
         System.out.println(Orderdata.totalNumItems);
         popup.setTitle("NILE DOT COM - Item Confirmed");
         popup.setContentText("item #" + Orderdata.totalNumItems + " accepted. Added to your cart.");
         popup.getDialogPane().getButtonTypes().add(type);
         popup.showAndWait();
 
-        // update current item # shown on screen 
+        // update current item # shown on screen
         Orderdata.totalNumItems++;
 
         itemIDLabel.setText("Enter item ID for item #" + Orderdata.totalNumItems);
         quantityLabel.setText("Enter quantity for item #" + Orderdata.totalNumItems);
         detailLabel.setText("Details for item #" + Orderdata.totalNumItems);
-        confirmButton.setText("Confirm item #"+ Orderdata.totalNumItems);
+        confirmButton.setText("Confirm item #" + Orderdata.totalNumItems);
         processButton.setText("Process item #" + Orderdata.totalNumItems);
         subtotalLabel.setText("Order subtotal for " + (Orderdata.totalNumItems - 1) + " item(s)");
 
@@ -270,10 +259,9 @@ public class MainSceneController implements Initializable {
         itemIDField.clear();
         quantityField.clear();
 
-        
     }
 
-    @FXML   
+    @FXML
     void finishClick(ActionEvent event) {
         System.out.println("GO\n");
     }
@@ -282,12 +270,12 @@ public class MainSceneController implements Initializable {
     void newOrderClick(ActionEvent event) {
         System.out.println("TO\n");
 
-        // clear out the invoice / transaction arraylist 
+        // clear out the invoice / transaction arraylist
         if (!Orderdata.invoice.isEmpty()) {
             Orderdata.invoice.clear();
         }
 
-        // reset the gui back to default state 
+        // reset the gui back to default state
 
         processButton.setText("Process item #1");
         confirmButton.setText("Confirm item #1");
@@ -295,6 +283,7 @@ public class MainSceneController implements Initializable {
         quantityLabel.setText("Enter quantity for item #1");
         detailLabel.setText("Details for item #1");
         subtotalLabel.setText("Order subtotal for 0 item(s)");
+
         itemIDField.clear();
         quantityField.clear();
         detailField.clear();
@@ -312,8 +301,7 @@ public class MainSceneController implements Initializable {
     @FXML
     void exitClick(ActionEvent event) {
         System.out.println("PLUTO\n");
-        if (Orderdata.invoice.isEmpty())
-        {
+        if (Orderdata.invoice.isEmpty()) {
             System.out.println("SON OF A BITCH");
         }
 
@@ -327,12 +315,11 @@ public class MainSceneController implements Initializable {
         System.out.println("BREUH");
         AnchorPane pane = FXMLLoader.load(getClass().getResource("viewOrderScene.fxml"));
         rootPane.getChildren().setAll(pane);
-    //      viewOrderStage = (Stage)((Node)event.getSource()).getScene().getWindow();
-    //    viewOrderScene = new Scene(root);
-    //     viewOrderStage.setScene(viewOrderScene);
-    //     viewOrderStage.show();
+        // viewOrderStage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        // viewOrderScene = new Scene(root);
+        // viewOrderStage.setScene(viewOrderScene);
+        // viewOrderStage.show();
 
     }
-
 
 }
