@@ -1,3 +1,7 @@
+// Name: Tim Yang
+// Course: CNT 4714-Spring 2022
+// Assignment title: Project 1- Event-driven Enterprise Simulation
+// Date: Sunday january 30, 2022
 
 public class Item {
     private String id;

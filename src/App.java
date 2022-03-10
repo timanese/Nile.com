@@ -1,3 +1,9 @@
+// Name: Tim Yang
+// Course: CNT 4714-Spring 2022
+// Assignment title: Project 1- Event-driven Enterprise Simulation
+// Date: Sunday january 30, 2022
+
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,12 +17,6 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        // File directory = new File("./");
-        // System.out.println("Will this print\n");
-        // System.out.println(directory.getAbsolutePath());
-        // or even this 
-        // Application.launch(args) because it comes from the application class
-
     }
 
     @Override
@@ -39,12 +39,8 @@ public class App extends Application {
             Image icon = new Image("P_icon.png");
             stage.getIcons().add(icon);
     
-            // set the size of the stage 
-            //stage.setWidth(700);
-            //stage.setHeight(500);
             stage.setResizable(false);
     
-            
             stage.setTitle("Nile Dot Com - Spring 2022");
 
             

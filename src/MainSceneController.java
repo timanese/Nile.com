@@ -1,11 +1,22 @@
+// Name: Tim Yang
+// Course: CNT 4714-Spring 2022
+// Assignment title: Project 1- Event-driven Enterprise Simulation
+// Date: Sunday january 30, 2022
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,25 +74,10 @@ public class MainSceneController implements Initializable {
     private Label subtotalLabel;
 
     // Wiring scene for viewOrder
-    private Parent root;
-    private Stage viewOrderStage;
-    private Scene viewOrderScene;
-
     @FXML
     private AnchorPane rootPane;
 
-    // private int quantity = 0;
-    // private int discount = 0;
-    // private double itemTotal = 0;
-    // private double subtotal = 0;
-
-    // private String itemName;
-    // private String itemID;
-    // private boolean itemAvaiable;
-    // private double itemPrice;
-
-    // private int totalNumItems = 1;
-
+    // Pop ups for error handling 
     Dialog<String> popup = new Dialog<String>();
     ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
 
@@ -109,14 +105,28 @@ public class MainSceneController implements Initializable {
             e.printStackTrace();
         }
 
-        this.confirmButton.setDisable(true);
-        this.viewOrderButton.setDisable(true);
-        this.finishButton.setDisable(true);
+        detailField.setEditable(false);
+        subtotalField.setEditable(false);
 
-        itemIDLabel.setText("Enter item ID for item #" + OrderData.totalNumItems);
-        quantityLabel.setText("Enter quantity for item #1" + OrderData.totalNumItems);
-        detailLabel.setText("Details for item #1" + OrderData.totalNumItems);
-        subtotalLabel.setText("Order subtotal for " + (OrderData.totalNumItems - 1) + " item(s)");
+        this.confirmButton.setDisable(true);
+
+        if (Orderdata.invoice.isEmpty()) {
+            this.finishButton.setDisable(true);
+            this.viewOrderButton.setDisable(true);
+        }
+
+        itemIDLabel.setText("Enter item ID for item #" + Orderdata.totalNumItems);
+        quantityLabel.setText("Enter quantity for item #" + Orderdata.totalNumItems);
+        detailLabel.setText("Details for item #" + Orderdata.totalNumItems);
+        subtotalLabel.setText("Order subtotal for " + (Orderdata.totalNumItems - 1) + " item(s)");
+        processButton.setText("Process item #" + Orderdata.totalNumItems);
+        confirmButton.setText("Confirm item #" + Orderdata.totalNumItems);
+
+        if (!Orderdata.invoice.isEmpty())
+        {
+            detailField.setText(Orderdata.invoice.get(Orderdata.invoice.size() - 1));
+            subtotalField.setText(df.format(Orderdata.subtotal) + "");
+        }
         System.out.println("DOES IT COME IN HERE");
     }
 
@@ -231,7 +241,7 @@ public class MainSceneController implements Initializable {
         // add to invoice
         Orderdata.invoice.add(Orderdata.itemID + " " + Orderdata.itemName + " " +
                 Orderdata.itemPrice + " " + Orderdata.quantity + " " + Orderdata.discount + "%" + " "
-                + Orderdata.itemTotal);
+                + df.format(Orderdata.itemTotal));
         System.out.println(Orderdata.invoice.get(0));
 
         // pop up to notify user the item has been added
@@ -243,6 +253,26 @@ public class MainSceneController implements Initializable {
 
         // update current item # shown on screen
         Orderdata.totalNumItems++;
+        Orderdata.quantity = Integer.parseInt(quantityField.getText());
+                if (Orderdata.quantity >= 15) {
+                    Orderdata.discount = 20;
+                } else if (Orderdata.quantity >= 10 && Orderdata.quantity <= 14) {
+                    Orderdata.discount = 15;
+                } else if (Orderdata.quantity >= 5 && Orderdata.quantity <= 9) {
+                    Orderdata.discount = 10;
+                } else if (Orderdata.quantity >= 1 && Orderdata.quantity <= 4) {
+                    Orderdata.discount = 0;
+                }
+                System.out.println("the discount" + Orderdata.discount / 100.0);
+                if (Orderdata.discount != 0) {
+                    double percentOff = Orderdata.itemPrice * (double) Orderdata.quantity
+                            * (Orderdata.discount / 100.0);
+                    Orderdata.itemTotal = (Orderdata.itemPrice * Orderdata.quantity) - percentOff;
+                } else {
+                    Orderdata.itemTotal = Orderdata.itemPrice * Orderdata.quantity;
+                }
+
+                Orderdata.subtotal += Orderdata.itemTotal;
 
         itemIDLabel.setText("Enter item ID for item #" + Orderdata.totalNumItems);
         quantityLabel.setText("Enter quantity for item #" + Orderdata.totalNumItems);
@@ -262,8 +292,11 @@ public class MainSceneController implements Initializable {
     }
 
     @FXML
-    void finishClick(ActionEvent event) {
-        System.out.println("GO\n");
+    void finishClick(ActionEvent event) throws IOException {
+        AnchorPane pane = FXMLLoader.load(getClass().getResource("finishOrder.fxml"));
+        rootPane.getChildren().setAll(pane);
+        
+
     }
 
     @FXML
@@ -292,34 +325,28 @@ public class MainSceneController implements Initializable {
         Orderdata.totalNumItems = 1;
         Orderdata.itemTotal = 0;
         Orderdata.subtotal = 0;
+        Orderdata.quantity = 0;
 
         this.viewOrderButton.setDisable(true);
-        this.finishButton.setDisable(true);
+        this.confirmButton.setDisable(true);
+
+        if (Orderdata.invoice.isEmpty()) {
+            this.finishButton.setDisable(true);
+        }
+        itemIDField.setEditable(true);
+        quantityField.setEditable(true);
 
     }
 
     @FXML
     void exitClick(ActionEvent event) {
-        System.out.println("PLUTO\n");
-        if (Orderdata.invoice.isEmpty()) {
-            System.out.println("SON OF A BITCH");
-        }
 
-        else {
-            System.out.println("Okay some healthy information.");
-        }
     }
 
     @FXML
     void viewClick(ActionEvent event) throws IOException {
-        System.out.println("BREUH");
         AnchorPane pane = FXMLLoader.load(getClass().getResource("viewOrderScene.fxml"));
         rootPane.getChildren().setAll(pane);
-        // viewOrderStage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        // viewOrderScene = new Scene(root);
-        // viewOrderStage.setScene(viewOrderScene);
-        // viewOrderStage.show();
-
     }
 
 }
